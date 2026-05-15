@@ -1,0 +1,41 @@
+
+services:
+  object-storage:
+    image: minio/minio:latest
+    hostname: minio
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: minio server /data --console-address ":9001"
+
+    volumes:
+      - minio:/data
+
+    networks:
+      backend:
+
+  server:
+    build:
+      context: ./MinIOExample/
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNET_HTTPS_PORTS="5000"
+      - MinIO__SecretKey=minioadmin
+      - MinIO__AccessKey=minioadmin
+      - MinIO__Host=minio
+      - MinIO__Port=9000
+    
+    networks:
+      backend:
+
+volumes:
+  minio:
+
+networks:
+  backend:
+    driver: bridge
