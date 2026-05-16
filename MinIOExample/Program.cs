@@ -14,7 +14,6 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.AddSingleton((scope) =>
 {
     var options = builder.Configuration.GetSection("MinIO").Get<MinIOOptions>()!;
-    Console.WriteLine($" endpoint: {options.Host}:{options.Port} credentials: {options.SecretKey}-{options.AccessKey}");
     var client = new MinioClient()
         .WithEndpoint(options.Host, options.Port)
         .WithCredentials(options.AccessKey, options.SecretKey)
